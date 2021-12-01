@@ -20,5 +20,3 @@
   (fn [triple] (reduce + triple))
   (partition 3 1 puzzleInput)))
 
-
-
