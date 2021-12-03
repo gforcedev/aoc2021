@@ -1,4 +1,4 @@
-; Turn integers split by newlines into a vector of numbers
+; Turn integers split by newlines into a vector of strings
 (def puzzleInput (clojure.string/split (slurp "assets/input3.txt") #"\n"))
 
 ; Part 1 - yep, I lasted a whole 2 days of summarising the problem in a comment
@@ -9,17 +9,13 @@
 
 (def bitCounts (map #(getBitCount puzzleInput %) (range (count (puzzleInput 0)))))
 
-(*
- (Integer/parseInt (apply str (map (fn [thisCount] (max-key thisCount 0 1)) bitCounts)) 2)
- (Integer/parseInt (apply str (map (fn [thisCount] (min-key thisCount 0 1)) bitCounts)) 2))
+(reduce
+  *
+  (map
+    #(Integer/parseInt (apply str (map (fn [thisCount] (% thisCount 0 1)) bitCounts)) 2)
+    [min-key max-key]))
 
 ; Part 2 - an attempt to do it nicer than part 1
-; Fully working apart from when using min-key we need to use (0 1) and when using max-key we need to use (1 0)
-; Currently both use 0 1
-(def testData ["00100" "11110" "10110" "10111" "10101" "01111" "00111" "11100" "10000" "11001" "00010" "01010"])
-
-(apply min-key (concat [(getBitCount testData 0)] [0 1]))
-
 (defn get-life-support-rating [[min-or-max-key args]]
   (loop [remaining puzzleInput
        index 0]
@@ -30,8 +26,5 @@
         (filter #(= (Integer/parseInt (str (nth % index))) important-bit) remaining))
       (inc index)))))
 
-(get-life-support-rating [min-key [0 1]])
-
 (reduce * (map #(Integer/parseInt (get-life-support-rating %) 2) [[min-key [1 0]] [max-key [0 1]]]))
 
-(concat 123 [1 2 3])
