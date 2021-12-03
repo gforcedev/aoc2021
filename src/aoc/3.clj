@@ -22,8 +22,13 @@
   (if (= (count remaining) 1)
     (first remaining)
     (recur
-      (let [important-bit (apply min-or-max-key (concat [(getBitCount remaining index)] args))]
-        (filter #(= (Integer/parseInt (str (nth % index))) important-bit) remaining))
+      (let [important-bit
+            ; Everything except from this line is actually nice
+            (apply min-or-max-key (concat [(getBitCount remaining index)] args))]
+        (filter
+          ; Okay maybe this line too because of the conversions
+          #(= (Integer/parseInt (str (nth % index))) important-bit)
+          remaining))
       (inc index)))))
 
 (reduce * (map #(Integer/parseInt (get-life-support-rating %) 2) [[min-key [1 0]] [max-key [0 1]]]))
