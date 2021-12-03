@@ -18,15 +18,20 @@
 ; Currently both use 0 1
 (def testData ["00100" "11110" "10110" "10111" "10101" "01111" "00111" "11100" "10000" "11001" "00010" "01010"])
 
-(defn get-life-support-rating [min-or-max-key]
+(apply min-key (concat [(getBitCount testData 0)] [0 1]))
+
+(defn get-life-support-rating [[min-or-max-key args]]
   (loop [remaining puzzleInput
        index 0]
   (if (= (count remaining) 1)
     (first remaining)
     (recur
-      (let [important-bit (min-or-max-key (getBitCount remaining index) 0 1)]
+      (let [important-bit (apply min-or-max-key (concat [(getBitCount remaining index)] args))]
         (filter #(= (Integer/parseInt (str (nth % index))) important-bit) remaining))
       (inc index)))))
 
-(reduce * (map #(Integer/parseInt (get-life-support-rating %) 2) [min-key max-key]))
+(get-life-support-rating [min-key [0 1]])
 
+(reduce * (map #(Integer/parseInt (get-life-support-rating %) 2) [[min-key [1 0]] [max-key [0 1]]]))
+
+(concat 123 [1 2 3])
