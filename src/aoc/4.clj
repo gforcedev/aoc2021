@@ -1,5 +1,5 @@
 ; First off load the numbers and bingo board
-(def input-strings (clojure.string/split (slurp "assets/testinput4.txt") #"\n"))
+(def input-strings (clojure.string/split (slurp "assets/input4.txt") #"\n"))
 (def nums (map read-string (clojure.string/split (first input-strings) #",")))
 
 (defn split-row [row] (filter #(not= "" %) (clojure.string/split row #" ")))
@@ -24,30 +24,13 @@
        (if (= (:num %) just-called) (assoc % :called true) %)
        %) board))
 
-; Traverse along row, moving to the next one if you find an uncalled number
-(defn check-horizontal-win [board]
-  (loop [x -1 y 0]
-    (if (= x (dec (count (first board))))
-      true
-      (if (= y (count board))
-        false
-        (if (:called (nth (nth board y) (inc x)))
-          (recur (inc x) y)
-          (recur -1 (inc y)))))))
-
-; Same as check-horizontal-win but for columns
-(defn check-vertical-win [board]
-  (loop [x 0 y -1]
-    (if (= y (dec (count board)))
-      true
-      (if (= x (count (first board)))
-        false
-        (if (:called (nth (nth board (inc y)) x))
-          (recur x (inc y))
-          (recur (inc x) -1))))))
-
 (defn check-win [board]
-  (or (check-horizontal-win board) (check-vertical-win board)))
+  (some identity
+        (map
+          (fn [b]
+            (= (apply max (map #(count (filter :called %)) b))
+               (count b)))
+          [board (apply mapv vector board)])))
 
 (defn score-board [board just-called]
   (*
@@ -69,10 +52,8 @@
 
 ; Part 2 - winning score of the board which will win last
 (loop [remaining nums curr-boards boards]
-  (let [
-        new-boards (map #(update-board % (first remaining)) curr-boards)
-        losing-score (first (map #(check-score % (first remaining)) new-boards))]
+  (let [new-boards (map #(update-board % (first remaining)) curr-boards)]
     (if (= (count new-boards) 1)
-      losing-score
-      (recur (rest remaining) (filter #(= 0 (check-score % (first remaining))) new-boards)))))
+      (check-score (first new-boards) (first remaining))
+      (recur (rest remaining) (filter #(= 0 (check-score % 1)) new-boards)))))
 
