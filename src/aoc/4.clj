@@ -1,5 +1,5 @@
 ; First off load the numbers and bingo board
-(def input-strings (clojure.string/split (slurp "assets/input4.txt") #"\n"))
+(def input-strings (clojure.string/split (slurp "assets/testinput4.txt") #"\n"))
 (def nums (map read-string (clojure.string/split (first input-strings) #",")))
 
 (defn split-row [row] (filter #(not= "" %) (clojure.string/split row #" ")))
@@ -66,4 +66,13 @@
     (if (> winning-score 0)
       winning-score
       (recur (rest remaining) new-boards))))
+
+; Part 2 - winning score of the board which will win last
+(loop [remaining nums curr-boards boards]
+  (let [
+        new-boards (map #(update-board % (first remaining)) curr-boards)
+        losing-score (first (map #(check-score % (first remaining)) new-boards))]
+    (if (= (count new-boards) 1)
+      losing-score
+      (recur (rest remaining) (filter #(= 0 (check-score % (first remaining))) new-boards)))))
 
