@@ -1,3 +1,10 @@
+; I'm going to call it for today - I tried to do
+; Everything just about correctly, but something in
+; My code is unoptimised to the point of OOMing on
+; The full set. For a very similar approach, but in actually
+; Well-written clojure, see:
+; https://github.com/zelark/AoC-2021/blob/main/src/zelark/aoc_2021/day_05.clj
+
 (defn parse-line [line]
   (vec (map
     (fn [coord-string] (vec (map #(Integer/parseInt %) (clojure.string/split coord-string #","))))
@@ -33,7 +40,7 @@
 (defn inc-in [grid coords]
   (assoc-in grid coords (inc (get-in grid coords))))
 
-(def vent-points (apply concat (map coord-to-ranges orthogonal-vent-lines)))
+(def vent-points (doall (apply concat (map coord-to-ranges orthogonal-vent-lines))))
 
 (def smaller-vent-points [[0 0] [0 1] [0 0]])
 
