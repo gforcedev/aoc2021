@@ -50,9 +50,14 @@
 
 (def starting-point
   (reduce (fn [curr [amount timer]]
-            (assoc curr amount timer)) (vec (range 9)) better-input))
+            (assoc curr amount timer)) (vec (repeat 9 0)) better-input))
+
+starting-point
 
 (defn do-day-better [vals]
-    (assoc (apply vector (flatten [(rest vals) (first vals)])) 6 (first vals)))
+    (assoc (apply vector (flatten [(rest vals) (first vals)])) 6 (+ (nth vals 7) (first vals))))
 
 (do-day-better starting-point)
+
+
+(reduce + ((apply comp (repeat 256 do-day-better)) starting-point))
