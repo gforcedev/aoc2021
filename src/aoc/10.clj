@@ -57,11 +57,10 @@
 (def part-2-scores (->> incomplete
      (map parse-incomplete)
      (map #(map incompletion-scores %))
-     (map #(reduce * %)) ; This line needs fixing to score correctly
+     (map #(reduce (fn [curr next]
+                     (+ next (* curr 5))) 0 %))
      sort
      vec))
-
-(identity part-2-scores)
 
 ; Too low apparently
 (nth part-2-scores (quot (count part-2-scores) 2))
